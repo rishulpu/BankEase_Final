@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Verification - BankEase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            background-image: linear-gradient(120deg, #f0f0f0, #f8f8f8);
+            padding: 20px;
+        }
+        
+        .otp-container {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            width: 400px;
+            text-align: center;
+        }
+        
+        .bank-logo {
+            margin-bottom: 15px;
+            font-size: 30px;
+            color: #2c3e50;
+        }
+        
+        .otp-container h2 {
+            margin-bottom: 15px;
+            color: #2c3e50;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .otp-container p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+            font-size: 14px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+            position: relative;
+        }
+        
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #444;
+            font-size: 14px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-top: 5px;
+            transition: border 0.3s ease;
+            font-size: 15px;
+            text-align: center;
+            letter-spacing: 8px;
+            font-weight: 600;
+        }
+        
+        .input-group input:focus {
+            border-color: #2c3e50;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
+        }
+        
+        .input-group i {
+            position: absolute;
+            right: 15px;
+            top: 38px;
+            color: #777;
+        }
+        
+        .verify-button {
+            width: 100%;
+            padding: 14px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        .verify-button:hover {
+            background: #1a252f;
+        }
+        
+        .message {
+            color: #e74c3c;
+            margin-top: 15px;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .messag {
+            color: #27ae60;
+            margin-top: 15px;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .resend-otp {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .resend-otp a {
+            color: #2c3e50;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .resend-otp a:hover {
+            color: #1a252f;
+            text-decoration: underline;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <div class="otp-container">
+        <div class="bank-logo">
+            <i class="fas fa-university"></i>
+        </div>
+        <h2>OTP Verification</h2>
+        <p>We have sent a one-time password (OTP) to your email. Please enter the OTP below to verify your account.</p>
+        
+        <form th:action="@{/val}" method="post">
+            <div class="input-group">
+                <label for="otp">Enter OTP</label>
+                <input type="text" name="otp" id="otp" placeholder="Enter 5-digit OTP" maxlength="5" pattern="[0-9]{5}" required>
+                <i class="fas fa-key"></i>
+            </div>
+            <button type="submit" class="verify-button">Verify OTP</button>
+        </form>
+
+        <div class="messag" th:text="${ms}"></div>
+        <div class="message" th:text="${msg}"></div>
+
+        
+    </div>
+
+    <script>
+        // Add shake animation to input on invalid OTP
+        const otpInput = document.getElementById('otp');
+        otpInput.addEventListener('input', function() {
+            if (this.value.length === 5 && !/^\d{5}$/.test(this.value)) {
+                this.classList.add('shake');
+                setTimeout(() => this.classList.remove('shake'), 500);
+            }
+        });
+
+        function resendOTP() {
+            // Add your resend OTP logic here
+            alert('OTP resent successfully!');
+        }
+    </script>
+</body>
+</html>

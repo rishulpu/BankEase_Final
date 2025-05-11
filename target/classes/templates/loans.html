@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankEase - Loan Management</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <div class="brand">
+            <i class="fas fa-university"></i>
+            <span>BankEase Admin</span>
+        </div>
+        <nav>
+            <a href="dashboard.html" class="menu-item">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="users-accounts.html" class="menu-item">
+                <i class="fas fa-user-circle"></i>
+                <span>User & Accounts</span>
+            </a>
+            <a href="transactions.html" class="menu-item">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Transactions</span>
+            </a>
+            <a href="loans.html" class="menu-item active">
+                <i class="fas fa-hand-holding-usd"></i>
+                <span>Loan Management</span>
+            </a>
+            <a href="/admin/logout" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Loan Management</h1>
+            <div class="admin-info">
+                <div class="admin-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <div th:text="${adminName}">Admin Name</div>
+                    <small th:text="${adminRole}">Super Admin</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Controls -->
+        <div class="search-controls">
+            <div class="search-group">
+                <div class="search-input-group">
+                    <input type="text" id="loanSearch" placeholder="Search by Loan ID..." class="search-input">
+                    <button class="action-btn" onclick="searchLoan()">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+            </div>
+            <div class="search-group">
+                <div class="search-input-group">
+                    <input type="text" id="customerSearch" placeholder="Search by Customer Name..." class="search-input">
+                    <button class="action-btn" onclick="searchByCustomer()">
+                        <i class="fas fa-search"></i> Search Customer
+                    </button>
+                </div>
+            </div>
+            <div class="search-group">
+                <select id="statusFilter" class="search-input" onchange="filterByStatus()">
+                    <option value="">Filter by Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Loan List -->
+        <div class="content-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Loan ID</th>
+                        <th>Customer Name</th>
+                        <th>Loan Type</th>
+                        <th>Amount</th>
+                        <th>Interest Rate</th>
+                        <th>Duration</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="loan : ${loans}">
+                        <td th:text="${loan.id}">LOAN123</td>
+                        <td th:text="${loan.customerName}">John Doe</td>
+                        <td th:text="${loan.type}">Personal</td>
+                        <td th:text="${'Rs.' + loan.amount}">Rs.500,000</td>
+                        <td th:text="${loan.interestRate + '%'}">12%</td>
+                        <td th:text="${loan.duration + ' months'}">36 months</td>
+                        <td>
+                            <span class="status-badge" th:class="${loan.status == 'Approved' ? 'status-badge status-active' : (loan.status == 'Rejected' ? 'status-badge status-blocked' : 'status-badge status-pending')}" th:text="${loan.status}">Pending</span>
+                        </td>
+                        <td>
+                            <button class="action-btn" onclick="viewLoan(this.getAttribute('data-id'))" th:data-id="${loan.id}">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button class="action-btn" style="background: #27ae60;" onclick="approveLoan(this.getAttribute('data-id'))" th:data-id="${loan.id}">
+                                <i class="fas fa-check"></i>
+                            </button>
+                            <button class="action-btn" style="background: #e74c3c;" onclick="rejectLoan(this.getAttribute('data-id'))" th:data-id="${loan.id}">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- View Loan Modal -->
+    <div id="viewLoanModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('viewLoanModal')">&times;</button>
+            <h2>Loan Details</h2>
+            <div class="loan-details">
+                <div class="detail-group">
+                    <label>Loan ID:</label>
+                    <span id="viewLoanId"></span>
+                </div>
+                <div class="detail-group">
+                    <label>Customer Name:</label>
+                    <span id="viewCustomerName"></span>
+                </div>
+                <div class="detail-group">
+                    <label>Account Number:</label>
+                    <span id="viewAccountNumber"></span>
+                </div>
+                <div class="detail-group">
+                    <label>Loan Type:</label>
+                    <span id="viewLoanType"></span>
+                </div>
+                <div class="detail-group">
+                    <label>Amount:</label>
+                    <span id="viewAmount"></span>
+                </div>
+                <div class="detail-group">
+                    <label>Interest Rate:</label>
+                    <span id="viewInterestRate"></span>
+                </div>
+                <div class="detail-group">
+                    <label>Duration:</label>
+                    <span id="viewDuration"></span>
+                </div>
+                <div class="detail-group">
+                    <label>EMI:</label>
+                    <span id="viewEMI"></span>
+                </div>
+                <div class="detail-group">
+                    <label>Status:</label>
+                    <span id="viewStatus"></span>
+                </div>
+                <div class="detail-group">
+                    <label>Application Date:</label>
+                    <span id="viewApplicationDate"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function searchLoan() {
+            const loanId = document.getElementById('loanSearch').value;
+            console.log('Searching loan:', loanId);
+            // Implement loan search logic here
+        }
+
+        function searchByCustomer() {
+            const customerName = document.getElementById('customerSearch').value;
+            console.log('Searching by customer:', customerName);
+            // Implement customer search logic here
+        }
+
+        function filterByStatus() {
+            const status = document.getElementById('statusFilter').value;
+            console.log('Filtering by status:', status);
+            // Implement status filter logic here
+        }
+
+        function viewLoan(loanId) {
+            console.log('Viewing loan:', loanId);
+            showModal('viewLoanModal');
+            // Implement view loan details logic here
+        }
+
+        function approveLoan(loanId) {
+            if (confirm('Are you sure you want to approve this loan?')) {
+                console.log('Approving loan:', loanId);
+                // Implement loan approval logic here
+            }
+        }
+
+        function rejectLoan(loanId) {
+            if (confirm('Are you sure you want to reject this loan?')) {
+                console.log('Rejecting loan:', loanId);
+                // Implement loan rejection logic here
+            }
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+    </script>
+</body>
+</html> 

@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signup - BankEase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f4;
+            background-image: linear-gradient(120deg, #f0f0f0, #f8f8f8);
+            padding: 20px;
+        }
+        
+        .signup-container {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            width: 400px;
+            text-align: center;
+        }
+        
+        .bank-logo {
+            margin-bottom: 15px;
+            font-size: 30px;
+            color: #2c3e50;
+        }
+        
+        .signup-container h2 {
+            margin-bottom: 25px;
+            color: #2c3e50;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+            position: relative;
+        }
+        
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #444;
+            font-size: 14px;
+        }
+        
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-top: 5px;
+            transition: border 0.3s ease;
+            font-size: 15px;
+            background-color: white;
+        }
+        
+        .input-group input:focus, .input-group select:focus {
+            border-color: #2c3e50;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
+        }
+        
+        .input-group i {
+            position: absolute;
+            right: 15px;
+            top: 38px;
+            color: #777;
+        }
+        
+        .signup-button {
+            width: 100%;
+            padding: 14px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        .signup-button:hover {
+            background: #1a252f;
+        }
+        
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: left;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0 15px;
+        }
+        
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .divider span {
+            padding: 0 10px;
+            color: #777;
+            font-size: 12px;
+        }
+        
+        .login-now {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .login-now a {
+            color: #2c3e50;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .login-now a:hover {
+            text-decoration: underline;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            width: 350px;
+            animation: popupFadeIn 0.3s ease;
+        }
+
+        @keyframes popupFadeIn {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -60%);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%);
+            }
+        }
+
+        .popup h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .popup p {
+            margin: 10px 0;
+            color: #555;
+        }
+
+        .popup button {
+            width: 100%;
+            padding: 14px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 20px;
+            transition: background 0.3s ease;
+        }
+
+        .popup button:hover {
+            background: #1a252f;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="bank-logo">
+            <i class="fas fa-university"></i>
+        </div>
+        <h2>Create Your BankEase Account</h2>
+        <form th:action="@{/signup}" method="post">
+            <div class="input-group">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" name="fullName" placeholder="Enter your full name" required>
+                <i class="fas fa-user"></i>
+            </div>
+            <div class="input-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
+                <i class="fas fa-phone"></i>
+            </div>
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div class="input-group">
+                <label for="address">Address</label>
+                <input type="text" id="address" name="address" placeholder="Enter your address" required>
+                <i class="fas fa-home"></i>
+            </div>
+            <div class="input-group">
+                <label for="dob">Date of Birth</label>
+                <input type="date" id="dob" name="dob" required>
+                <i class="fas fa-calendar"></i>
+            </div>
+            <div class="input-group">
+                <label for="accountType">Account Type</label>
+                <select id="accountType" name="accountType" required>
+                    <option value="">Select Account Type</option>
+                    <option value="savings">Savings Account</option>
+                    <option value="current">Current Account</option>
+                </select>
+                <i class="fas fa-chevron-down"></i>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Create a password" required>
+                <i class="fas fa-lock"></i>
+            </div>
+            <button type="submit" class="signup-button">Create Account</button>
+            <p class="error-message" th:text="${msg}"></p>
+        </form>
+        
+        <div class="divider">
+            <span>OR</span>
+        </div>
+        
+        <div class="login-now">
+            Already have an account? <a href="/login">Login Now</a>
+        </div>
+    </div>
+    
+    <!-- Popup Modal -->
+    <div class="popup" id="popup" th:style="${session.username != null} ? 'display:block;' : 'display:none;'">
+        <h3>🎉 Welcome to BankEase!</h3>
+        <p>Your account has been created successfully.</p>
+        <p><strong>Username:</strong> <span th:text="${session.username}"></span></p>
+        <p><strong>Password:</strong> <span th:text="${session.password}"></span></p>
+        <p style="font-size: 12px; color: #666; margin-top: 15px;">Please save these credentials securely.</p>
+        <button onclick="closePopup()">Continue to Login</button>
+    </div>
+
+    <script>
+        window.onload = function() {
+            var popup = document.getElementById('popup');
+            if (popup.style.display === 'block') {
+                fetch('/clearSession', { method: 'POST' });
+            }
+        };
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+            window.location.href = '/index';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - BankEase</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+            background-image: linear-gradient(120deg, #f0f0f0, #f8f8f8);
+        }
+        
+        .login-container {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            width: 340px;
+            text-align: center;
+        }
+        
+        .bank-logo {
+            margin-bottom: 15px;
+            font-size: 30px;
+            color: #2c3e50;
+        }
+        
+        .login-container h2 {
+            margin-bottom: 25px;
+            color: #2c3e50;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+            position: relative;
+        }
+        
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #444;
+            font-size: 14px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            margin-top: 5px;
+            transition: border 0.3s ease;
+            font-size: 15px;
+        }
+        
+        .input-group input:focus {
+            border-color: #2c3e50;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(44, 62, 80, 0.1);
+        }
+        
+        .input-group i {
+            position: absolute;
+            right: 15px;
+            top: 38px;
+            color: #777;
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: 14px;
+            background: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-top: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        .login-button:hover {
+            background: #1a252f;
+        }
+        
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            font-size: 14px;
+            text-align: left;
+        }
+        
+        .forgot-password {
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .forgot-password a {
+            color: #2c3e50;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .forgot-password a:hover {
+            text-decoration: underline;
+            color: #1a252f;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0 15px;
+        }
+        
+        .divider::before, .divider::after {
+            content: "";
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .divider span {
+            padding: 0 10px;
+            color: #777;
+            font-size: 12px;
+        }
+        
+        .register-now {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .register-now a {
+            color: #2c3e50;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .register-now a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="bank-logo">
+            <a href="/" style="text-decoration: none; color: inherit;">
+                <i class="fas fa-university"></i>
+            </a>
+        </div>
+        <h2>Login to BankEase</h2>
+        <form action="log" method="get">
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                <i class="fas fa-envelope"></i>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                <i class="fas fa-lock"></i>
+            </div>
+            <button type="submit" class="login-button">Login</button>
+            <p class="error-message" th:text="${msg}"></p>
+        </form>
+        <div class="forgot-password">
+            <a href="forgot">Forgot Password?</a>
+        </div>
+        
+        <div class="divider">
+            <span>OR</span>
+        </div>
+        
+        <div class="register-now">
+            Don't have an account? <a href="#">Register Now</a>
+        </div>
+    </div>
+</body>
+</html>

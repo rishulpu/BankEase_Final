@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>BankEase Dashboard - Deposit</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+			font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+		}
+
+		body {
+			background-color: #f4f6f8;
+			color: #333;
+			line-height: 1.6;
+			min-height: 100vh;
+			display: flex;
+			flex-direction: column;
+		}
+
+		/* Navigation Bar styles */
+		.navbar {
+			background: #2c3e50;
+			color: white;
+			padding: 15px 30px;
+			position: fixed;
+			width: 100%;
+			top: 0;
+			z-index: 1000;
+			box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+		}
+
+		.nav-container {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			max-width: 1400px;
+			margin: 0 auto;
+		}
+
+		.nav-brand {
+			display: flex;
+			align-items: center;
+			font-size: 24px;
+			font-weight: bold;
+			text-decoration: none;
+			color: white;
+		}
+
+		.nav-brand i {
+			margin-right: 10px;
+			color: #3498db;
+			font-size: 24px;
+		}
+
+		.nav-menu {
+			display: flex;
+			gap: 20px;
+			align-items: center;
+		}
+
+		.nav-item {
+			color: #ecf0f1;
+			text-decoration: none;
+			padding: 8px 15px;
+			border-radius: 5px;
+			transition: all 0.3s;
+			font-size: 16px;
+		}
+
+		.nav-item:hover, .nav-item.active {
+			background: rgba(52, 152, 219, 0.2);
+		}
+
+		.nav-item i {
+			margin-right: 8px;
+			font-size: 16px;
+		}
+
+		.user-profile-nav {
+			display: flex;
+			align-items: center;
+			gap: 15px;
+			margin-left: 40px;
+			padding-left: 20px;
+		}
+
+		.user-avatar-nav {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			background: #3498db;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 18px;
+		}
+
+		.user-info {
+			display: flex;
+			flex-direction: column;
+		}
+
+		.user-name-nav {
+			font-weight: bold;
+			font-size: 15px;
+		}
+
+		.user-id-nav {
+			font-size: 13px;
+			color: #bdc3c7;
+		}
+
+		.welcome-bar {
+			background: #ecf0f1;
+			padding: 15px;
+			display: flex;
+			align-items: center;
+			gap: 20px;
+			border-bottom: 2px solid #bdc3c7;
+		}
+
+		.welcome-text {
+			font-size: 18px;
+		}
+
+		.dashboard-content {
+			margin-top: 80px;
+			display: flex;
+			margin: 30px;
+			gap: 30px;
+		}
+
+		.account-details {
+			flex: 1;
+			background: white;
+			padding: 20px;
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+		}
+
+		.account-details h2 {
+			margin-bottom: 20px;
+			font-size: 20px;
+			color: #2c3e50;
+		}
+
+		.account-details p {
+			margin-bottom: 10px;
+			font-size: 16px;
+		}
+
+		.transaction-module {
+			margin-top: 30px;
+			background: #d1f2eb;
+			padding: 20px;
+			border-radius: 10px;
+			border: 2px solid #27ae60;
+		}
+
+		.transaction-module h3 {
+			font-size: 20px;
+			margin-bottom: 15px;
+			color: #27ae60;
+			text-align: center;
+		}
+
+		.transaction-module label {
+			display: block;
+			margin-bottom: 5px;
+			font-weight: bold;
+			font-size: 14px;
+		}
+
+		.transaction-module input {
+			width: 100%;
+			padding: 8px;
+			margin-bottom: 15px;
+			border-radius: 5px;
+			border: 1px solid #bdc3c7;
+			font-size: 14px;
+		}
+
+		.transaction-module button {
+			width: 100%;
+			padding: 10px;
+			background: #27ae60;
+			color: white;
+			font-size: 16px;
+			border: none;
+			border-radius: 5px;
+			cursor: pointer;
+			transition: background 0.3s ease;
+		}
+
+		.transaction-module button:hover {
+			background: #1e8449;
+		}
+
+		.bank-statement {
+			flex: 2;
+			background: white;
+			padding: 25px;
+			border-radius: 10px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		}
+
+		.bank-statement h2 {
+			margin-bottom: 25px;
+			font-size: 22px;
+			color: #2c3e50;
+			display: flex;
+			align-items: center;
+			gap: 10px;
+		}
+
+		.bank-statement h2 i {
+			color: #3498db;
+		}
+
+		.statement-table {
+			width: 100%;
+			border-collapse: separate;
+			border-spacing: 0;
+			margin-top: 15px;
+		}
+
+		.statement-table th {
+			background: #f8f9fa;
+			color: #2c3e50;
+			font-weight: 600;
+			padding: 15px;
+			text-align: left;
+			border-bottom: 2px solid #e9ecef;
+		}
+
+		.statement-table td {
+			padding: 15px;
+			border-bottom: 1px solid #e9ecef;
+			color: #495057;
+		}
+
+		.statement-table tr:hover {
+			background-color: #f8f9fa;
+		}
+
+		.statement-table .amount {
+			font-weight: 600;
+		}
+
+		.statement-table .deposit {
+			color: #27ae60;
+		}
+
+		.statement-table .withdraw {
+			color: #e74c3c;
+		}
+
+		.statement-table .date {
+			color: #6c757d;
+			font-size: 0.9em;
+		}
+
+		.statement-table .description {
+			max-width: 200px;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+
+		@media (max-width: 1024px) {
+			.nav-container {
+				padding: 0 20px;
+			}
+
+			.nav-menu {
+				gap: 15px;
+			}
+
+			.nav-item {
+				padding: 8px 12px;
+				font-size: 15px;
+			}
+
+			.user-profile-nav {
+				margin-left: 30px;
+				padding-left: 15px;
+			}
+		}
+
+		@media (max-width: 768px) {
+			.navbar {
+				padding: 10px 15px;
+			}
+
+			.nav-menu {
+				gap: 10px;
+			}
+
+			.nav-item {
+				padding: 6px 10px;
+				font-size: 14px;
+			}
+
+			.user-profile-nav {
+				margin-left: 20px;
+				padding-left: 10px;
+			}
+
+			.dashboard-content {
+				margin-top: 80px;
+			}
+		}
+
+		.logout-btn {
+			margin: 30px;
+			display: flex;
+			justify-content: center;
+		}
+
+		.logout-btn button {
+			padding: 10px 30px;
+			background: #e74c3c;
+			color: white;
+			border: none;
+			font-size: 16px;
+			border-radius: 5px;
+			cursor: pointer;
+		}
+
+		.logout-btn button:hover {
+			background: #c0392b;
+		}
+	</style>
+</head>
+
+<body>
+	<!-- Navigation Bar -->
+	<nav class="navbar">
+		<div class="nav-container">
+			<a href="/account" class="nav-brand">
+				<i class="fas fa-university"></i>
+				BankEase
+			</a>
+			
+			<div class="nav-menu">
+				<a href="/dashboard" class="nav-item">
+					<i class="fas fa-home"></i>Dashboard
+				</a>
+				<a href="/profile" class="nav-item">
+					<i class="fas fa-user"></i>My Profile
+				</a>
+				<a href="#" class="nav-item">
+					<i class="fas fa-lock"></i>Change Password
+				</a>
+				<a href="/transfer" class="nav-item">
+					<i class="fas fa-exchange-alt"></i>Fund Transfer
+				</a>
+				<a href="/statement" class="nav-item">
+					<i class="fas fa-file-invoice-dollar"></i>Statement
+				</a>
+				<div class="user-profile-nav">
+					<div class="user-avatar-nav">
+						<i class="fas fa-user"></i>
+					</div>
+					<div class="user-info">
+						<div class="user-name-nav" th:text="${customer.name}">User</div>
+						<div class="user-id-nav" th:text="'ID: ' + ${account.cust_id}">ID: 1010112</div>
+					</div>
+				</div>
+				<a href="#" class="nav-item" onclick="logout()">
+					<i class="fas fa-sign-out-alt"></i>Logout
+				</a>
+			</div>
+		</div>
+	</nav>
+
+	<!-- Welcome Bar -->
+	<div class="welcome-bar">
+		<div class="welcome-text">
+			<p>Welcome <b th:text="${customer.name}">User</b></p>
+		</div>
+	</div>
+
+	<!-- Main Dashboard Content -->
+	<div class="dashboard-content">
+		<!-- Left: Account Details -->
+		<div class="account-details">
+			<h2>Account Details</h2>
+			<p><strong>Customer ID:</strong> <span th:text="${account.cust_id}">1010112</span></p>
+			<p><strong>Account Number:</strong> <span th:text="${account.account_number}">1011071010112</span></p>
+			<p><strong>Account Name:</strong> <span th:text="${customer.name}">Liam Moore</span></p>
+			<p><strong>Account Type:</strong> <span th:text="${account.ac_type}">Saving</span></p>
+			<p><strong>Available Balance:</strong> <div class="summary-card-value" th:text="'Rs.' + ${account.balance}">Rs.8,050.00</div></p>
+
+			<!-- Transaction Module for Deposit Only -->
+			<div class="transaction-module">
+				<h3>Deposit Money</h3>
+				<form id="depositForm" action="/afterDeposite" method="POST">
+				    <label for="amount">Deposit Amount (Rs.):</label>
+				    <input type="text" id="amount" name="amount" min="1" required>
+
+				    <label for="description">Description:</label>
+				    <input type="text" id="description" name="description" placeholder="Enter a description" required>
+
+				    <button type="submit">Deposit Now</button>
+				</form>
+				<b th:text="${msg}">User</b>
+			</div>
+		</div>
+
+		<!-- Right: Bank Statement -->
+		<div class="bank-statement">
+			<h2><i class="fas fa-file-invoice-dollar"></i> Bank Statement</h2>
+			<table class="statement-table">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>Date</th>
+						<th>Transaction ID</th>
+						<th>Description</th>
+						<th>Withdraw</th>
+						<th>Deposit</th>
+						<th>Balance</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr th:each="txn, stat : ${statements}">
+						<td th:text="${stat.index + 1}">1</td>
+						<td class="date" th:text="${txn.date}">17/09/23</td>
+						<td th:text="${txn.trans_id}">838895133</td>
+						<td class="description" th:text="${txn.desce}">Cash Deposit/838895133</td>
+						<td class="amount-value withdraw" th:text="${txn.credit}">Rs.4400</td>
+						<td class="amount-value deposit" th:text="${txn.deposite}">Rs.0</td>
+						<td class="amount-value" th:text="'Rs.' + ${txn.total_balance}">Rs.8050</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<!-- JavaScript -->
+	<script>
+		function logout() {
+			alert("You have been logged out.");
+			window.location.href = "/logout";
+		}
+	</script>
+
+</body>
+
+</html>

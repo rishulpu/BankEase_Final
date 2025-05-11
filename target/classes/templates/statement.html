@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankEase - Account Statement</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f8;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation Bar styles */
+        .navbar {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-brand i {
+            margin-right: 10px;
+            color: #3498db;
+            font-size: 24px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-item {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(52, 152, 219, 0.2);
+        }
+
+        .nav-item i {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .user-profile-nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-left: 40px;
+            padding-left: 20px;
+        }
+
+        .user-avatar-nav {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name-nav {
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .user-id-nav {
+            font-size: 13px;
+            color: #bdc3c7;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-top: 80px;
+            padding: 20px;
+            flex: 1;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+
+        .welcome-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .welcome-card h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Statement Styles */
+        .statement-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .statement-header {
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 1rem;
+        }
+
+        .statement-title {
+            font-size: 1.3rem;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .statement-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .statement-table th {
+            background: #f8f9fa;
+            padding: 1rem;
+            text-align: left;
+            color: #2c3e50;
+            font-weight: 600;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .statement-table td {
+            padding: 1rem;
+            border-bottom: 1px solid #e9ecef;
+            color: #2d3436;
+        }
+
+        .statement-table tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Footer styles */
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .footer-logo i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-link {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .footer-link:hover {
+            color: #3498db;
+        }
+
+        .footer-copyright {
+            font-size: 14px;
+            color: #bdc3c7;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-container {
+                padding: 0 20px;
+            }
+
+            .nav-menu {
+                gap: 15px;
+            }
+
+            .nav-item {
+                padding: 8px 12px;
+                font-size: 15px;
+            }
+
+            .user-profile-nav {
+                margin-left: 30px;
+                padding-left: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 15px;
+            }
+
+            .nav-menu {
+                gap: 10px;
+            }
+
+            .nav-item {
+                padding: 6px 10px;
+                font-size: 14px;
+            }
+
+            .user-profile-nav {
+                margin-left: 20px;
+                padding-left: 10px;
+            }
+
+            .statement-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-brand">
+                <i class="fas fa-university"></i>
+                BankEase
+            </a>
+            
+            <div class="nav-menu">
+                <a href="/dashboard" class="nav-item">
+                    <i class="fas fa-home"></i>Dashboard
+                </a>
+                <a href="/profile" class="nav-item">
+                    <i class="fas fa-user"></i>My Profile
+                </a>
+                <a href="/changePass" class="nav-item">
+                    <i class="fas fa-lock"></i>Change Password
+                </a>
+                <a href="/transfer" class="nav-item">
+                    <i class="fas fa-exchange-alt"></i>Fund Transfer
+                </a>
+                <a href="/statement" class="nav-item active">
+                    <i class="fas fa-file-invoice-dollar"></i>Statement
+                </a>
+                <div class="user-profile-nav">
+                    <div class="user-avatar-nav">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name-nav" th:text="${customer.name}">User Name</div>
+                        <div class="user-id-nav" th:text="'ID: ' + ${account.cust_id}">ID: 1010112</div>
+                    </div>
+                </div>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <!-- Welcome Section -->
+        <div class="welcome-card">
+            <h2>
+                <i class="fas fa-user-circle"></i>
+                Welcome, <span th:text="${customer.name}">User</span>!
+            </h2>
+    </div>
+
+        <!-- Statement Section -->
+        <div class="statement-container">
+            <div class="statement-header">
+                <h2 class="statement-title">
+                    <i class="fas fa-history"></i>
+                    Bank Statement
+                </h2>
+            </div>
+
+            <table class="statement-table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Date</th>
+                        <th>Trans. ID</th>
+                        <th>Description</th>
+                        <th>Withdraw</th>
+                        <th>Deposit</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="txn, stat : ${statements}">
+                        <td th:text="${stat.index + 1}">1</td>
+                        <td th:text="${txn.date}">17/09/23</td>
+                        <td th:text="${txn.trans_id}">838895133</td>
+                        <td th:text="${txn.desce}">Cash Withdrawal/838895133</td>
+                        <td th:text="${txn.credit}">0</td>
+                        <td th:text="${txn.deposite}">4400</td>
+                        <td th:text="${txn.total_balance}">$8050</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-university"></i>
+                BankEase
+            </div>
+            <div class="footer-links">
+                <a href="/about" class="footer-link">About Us</a>
+                <a href="/contact" class="footer-link">Contact</a>
+                <a href="/privacy" class="footer-link">Privacy Policy</a>
+            </div>
+            <div class="footer-copyright">
+                © 2024 BankEase. All rights reserved.
+            </div>
+    </div>
+    </footer>
+
+    <script>
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+            window.location.href = "/logout";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankEase - Fund Transfer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f8;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation Bar styles */
+        .navbar {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-brand i {
+            margin-right: 10px;
+            color: #3498db;
+            font-size: 24px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-item {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(52, 152, 219, 0.2);
+        }
+
+        .nav-item i {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .user-profile-nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-left: 40px;
+            padding-left: 20px;
+        }
+
+        .user-avatar-nav {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name-nav {
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .user-id-nav {
+            font-size: 13px;
+            color: #bdc3c7;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-top: 80px;
+            padding: 20px;
+            flex: 1;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+        }
+
+        .welcome-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .welcome-card h2 {
+            color: #2c3e50;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .account-details {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .account-details h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .account-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            transition: transform 0.2s;
+        }
+
+        .info-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .info-item p {
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-item i {
+            color: #3498db;
+        }
+
+        .transaction-module {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            border: 1px solid #e0e0e0;
+        }
+
+        .transaction-module h3 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: 500;
+        }
+
+        .form-group label i {
+            color: #3498db;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .submit-btn {
+            background: #3498db;
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            width: 100%;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover {
+            background: #2980b9;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Footer styles */
+        .footer {
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            margin-top: auto;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .footer-logo i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .footer-link {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .footer-link:hover {
+            color: #3498db;
+        }
+
+        .footer-copyright {
+            font-size: 14px;
+            color: #bdc3c7;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-container {
+                padding: 0 20px;
+            }
+
+            .nav-menu {
+                gap: 15px;
+            }
+
+            .nav-item {
+                padding: 8px 12px;
+                font-size: 15px;
+            }
+
+            .user-profile-nav {
+                margin-left: 30px;
+                padding-left: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 10px 15px;
+            }
+
+            .nav-menu {
+                gap: 10px;
+            }
+
+            .nav-item {
+                padding: 6px 10px;
+                font-size: 14px;
+            }
+
+            .user-profile-nav {
+                margin-left: 20px;
+                padding-left: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-brand">
+                <i class="fas fa-university"></i>
+                BankEase
+            </a>
+            
+            <div class="nav-menu">
+                <a href="/dashboard" class="nav-item">
+                    <i class="fas fa-home"></i>Dashboard
+                </a>
+                <a href="/profile" class="nav-item">
+                    <i class="fas fa-user"></i>My Profile
+                </a>
+                <a href="/changePass" class="nav-item">
+                    <i class="fas fa-lock"></i>Change Password
+                </a>
+                <a href="/transfer" class="nav-item active">
+                    <i class="fas fa-exchange-alt"></i>Fund Transfer
+                </a>
+                <a href="/statement" class="nav-item">
+                    <i class="fas fa-file-invoice-dollar"></i>Statement
+                </a>
+                <div class="user-profile-nav">
+                    <div class="user-avatar-nav">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name-nav" th:text="${customer.name}">User Name</div>
+                        <div class="user-id-nav" th:text="'ID: ' + ${account.cust_id}">ID: 1010112</div>
+                    </div>
+                </div>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <!-- Welcome Section -->
+        <div class="welcome-card">
+            <h2>
+                <i class="fas fa-user-circle"></i>
+                Welcome, <span th:text="${customer.name}">User</span>!
+            </h2>
+        </div>
+
+        <!-- Account Details and Transfer Form -->
+        <div class="account-details">
+            <h2>
+                <i class="fas fa-info-circle"></i>
+                Account Information
+            </h2>
+            <div class="account-info">
+                <div class="info-item">
+                    <p>
+                        <i class="fas fa-id-card"></i>
+                        <strong>Customer ID:</strong>
+                        <span th:text="${account.cust_id}">1010112</span>
+                    </p>
+                </div>
+                <div class="info-item">
+                    <p>
+                        <i class="fas fa-hashtag"></i>
+                        <strong>Account Number:</strong>
+                        <span th:text="${account.account_number}">1011071010112</span>
+                    </p>
+                </div>
+                <div class="info-item">
+                    <p>
+                        <i class="fas fa-piggy-bank"></i>
+                        <strong>Account Type:</strong>
+                        <span th:text="${account.ac_type}">Saving</span>
+                    </p>
+                </div>
+                <div class="info-item">
+                    <p>
+                        <i class="fas fa-wallet"></i>
+                        <strong>Available Balance:</strong>
+                        Rs.<span th:text="${account.balance}">8050.00</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="transaction-module">
+                <h3>
+                    <i class="fas fa-exchange-alt"></i>
+                    Fund Transfer
+                </h3>
+                <form id="fundTransferForm" action="/afterFund" method="POST">
+                    <div class="form-group">
+                        <label for="receiverAccount">
+                            <i class="fas fa-user"></i>
+                            Receiver Account Number
+                        </label>
+                        <input type="text" id="receiverAccount" name="receiverAccount" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="receiverName">
+                            <i class="fas fa-user-tag"></i>
+                            Receiver Name
+                        </label>
+                        <input type="text" id="receiverName" name="receiverName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="amount">
+                            <i class="fas fa-dollar-sign"></i>
+                            Amount
+                        </label>
+                        <input type="number" id="amount" name="amount" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">
+                            <i class="fas fa-comment-alt"></i>
+                            Description
+                        </label>
+                        <input type="text" id="description" name="description" required>
+                    </div>
+
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i>
+                        Transfer Now
+                    </button>
+                    <p class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span th:text="${msg}"></span>
+                    </p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <i class="fas fa-university"></i>
+                BankEase
+            </div>
+            <div class="footer-links">
+                <a href="/about" class="footer-link">About Us</a>
+                <a href="/contact" class="footer-link">Contact</a>
+                <a href="/privacy" class="footer-link">Privacy Policy</a>
+            </div>
+            <div class="footer-copyright">
+                © 2024 BankEase. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = "/logout";
+            }
+        }
+    </script>
+</body>
+</html>

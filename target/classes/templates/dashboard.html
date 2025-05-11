@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankEase - Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <div class="navbar">
+        <div class="brand">
+            <i class="fas fa-university"></i>
+            <span>BankEase Admin</span>
+        </div>
+        <nav>
+            <a href="/dash" class="menu-item active">
+                <i class="fas fa-tachometer-alt"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/useracc" class="menu-item">
+                <i class="fas fa-user-circle"></i>
+                <span>User & Accounts</span>
+            </a>
+           
+          
+            <a href="/logout" class="menu-item">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Dashboard</h1>
+            <div class="admin-info">
+                <div class="admin-avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <div >Admin</div>
+                    <small >Super Admin</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Search Controls -->
+        <div class="search-controls">
+            <div class="search-group">
+                <form id="searchByIdForm" action="/searchbyid" method="POST" onsubmit="return searchById(event)">
+                    <div class="search-input-group">
+                        <input type="text" id="customerIdSearch" name="customerId" placeholder="Search by Customer ID..." class="search-input">
+                        <button type="submit" class="action-btn">
+                            <i class="fas fa-search"></i> Search ID
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="search-group">
+                <form id="searchByNameForm" action="/searchname" method="POST" onsubmit="return searchByName(event)">
+                    <div class="search-input-group">
+                        <input type="text" id="customerNameSearch" name="customerName" placeholder="Search by Customer Name..." class="search-input">
+                        <button type="submit" class="action-btn">
+                            <i class="fas fa-search"></i> Search Name
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="search-group">
+                <form id="searchByEmailForm" action="/searchemail" method="POST" onsubmit="return searchByEmail(event)">
+                    <div class="search-input-group">
+                        <input type="text" id="customerEmailSearch" name="customerEmail" placeholder="Search by Email..." class="search-input">
+                        <button type="submit" class="action-btn">
+                            <i class="fas fa-search"></i> Search Email
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+		
+		
+
+        <!-- Customer List Table -->
+        <div class="content-section">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Customer ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Account Number</th>
+                        <th>Account Type</th>
+                        <th>Balance</th>
+                        <th>Status</th>
+                        
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="dto : ${customers}">
+						<td th:text="${dto.cust.id}">CUS001</td>
+						    <td th:text="${dto.cust.name}">John Doe</td>
+						    <td th:text="${dto.cust.email}">john@example.com</td>
+						    <td th:text="${dto.cust.phone}">+91-9876543210</td>
+						    <td th:text="${dto.acc.account_number}">1234567890</td>
+						    <td th:text="${dto.acc.ac_type}">Savings</td>
+						    <td th:text="${dto.acc.balance}">Rs. 50,000</td> 
+                        <td>
+                            <span class="status-badge">Active</span>
+                        </td>
+                        
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+	<div th:text="${msg}" style="color: red;"></div>
+
+    <!-- View Customer Details Modal -->
+    <div id="viewCustomerModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal('viewCustomerModal')">&times;</button>
+            <h2>Customer Details</h2>
+            <div class="customer-details">
+                <div class="detail-group">
+                    <label>Customer ID:</label>
+                    <span id="viewCustomerId"></span>
+                </div>
+                <div class="detail-group">
+                    <label>Name:</label>
+                    <span id="viewCustomerName"></span>
+                </div>
+                <div class="detail-group">
+                    <label>Email:</label>
+                    <span id="viewCustomerEmail"></span>
+                </div>
+                <div class="detail-group">
+                    <label>Phone:</label>
+                    <span id="viewCustomerPhone"></span>
+                </div>
+                <div class="detail-group">
+                    <label>Account Number:</label>
+                    <span id="viewCustomerAccount"></span>
+                </div>
+                <div class="detail-group">
+                    <label>Balance:</label>
+                    <span id="viewCustomerBalance"></span>
+                </div>
+                <div class="detail-group">
+                    <label>Status:</label>
+                    <span id="viewCustomerStatus"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function searchById(event) {
+            event.preventDefault();
+            const searchId = document.getElementById('customerIdSearch').value;
+            if (!searchId.trim()) {
+                alert('Please enter a Customer ID');
+                return false;
+            }
+            document.getElementById('searchByIdForm').submit();
+        }
+
+        function searchByName(event) {
+            event.preventDefault();
+            const searchName = document.getElementById('customerNameSearch').value;
+            if (!searchName.trim()) {
+                alert('Please enter a Customer Name');
+                return false;
+            }
+            document.getElementById('searchByNameForm').submit();
+        }
+
+        function searchByEmail(event) {
+            event.preventDefault();
+            const searchEmail = document.getElementById('customerEmailSearch').value;
+            if (!searchEmail.trim()) {
+                alert('Please enter an Email');
+                return false;
+            }
+            document.getElementById('searchByEmailForm').submit();
+        }
+
+        function viewCustomerDetails(customerId) {
+            console.log('Viewing customer details:', customerId);
+            showModal('viewCustomerModal');
+            // Implement view details logic here
+        }
+
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+    </script>
+</body>
+</html> 

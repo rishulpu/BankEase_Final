@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>BankEase - User & Accounts</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	<link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+
+<body>
+	<!-- Navigation Bar -->
+	<div class="navbar">
+		<div class="brand">
+			<i class="fas fa-university"></i>
+			<span>BankEase Admin</span>
+		</div>
+		<nav>
+			<a href="/dash" class="menu-item">
+				<i class="fas fa-tachometer-alt"></i>
+				<span>Dashboard</span>
+			</a>
+			<a href="/useracc" class="menu-item active">
+				<i class="fas fa-user-circle"></i>
+				<span>User & Accounts</span>
+			</a>
+			
+			
+			<a href="/logout" class="menu-item">
+				<i class="fas fa-sign-out-alt"></i>
+				<span>Logout</span>
+			</a>
+		</nav>
+	</div>
+
+	<!-- Main Content -->
+	<div class="main-content">
+		<div class="header">
+			<h1>User & Account Management</h1>
+			<div class="admin-info">
+				<div class="admin-avatar">
+					<i class="fas fa-user"></i>
+				</div>
+				<div>
+					<div >Admin</div>
+					<small>Super Admin</small>
+				</div>
+			</div>
+		</div>
+
+		<!-- Action Buttons -->
+		<div class="action-controls">
+			<button class="action-btn" onclick="showModal('addUserAccountModal')">
+				<i class="fas fa-plus"></i> Add New User & Account
+			</button>
+			
+		</div>
+
+		<!-- Search Controls -->
+		<div class="search-controls">
+		    <form method="post" action="/search" class="search-input-group">
+		        <input type="text" id="userAccountSearch" name="accountId" placeholder="Search by ID"
+		            class="search-input" style="flex: 1;">
+		        <button type="submit" class="action-btn">
+		            <i class="fas fa-search"></i> Search Account
+		        </button>
+		    </form>
+		</div>
+		<div th:text="${msg}" style="color: red;"></div>
+
+		<!-- User & Account List -->
+		<div class="content-section">
+			<table>
+				<thead>
+					<tr>
+						<th>User ID</th>
+						<th>Name</th>
+						<th>Email</th>
+						<th>Phone</th>
+						<th>Account Number</th>
+						<th>Account Type</th>
+						<th>Balance</th>
+						<th>Status</th>
+						<th>Actions</th>
+					</tr>
+				</thead>
+				<tbody>
+				<tbody>
+					<tr th:each="dto:${customers}">
+						<td th:text="${dto.cust.id}">CUS001</td>
+						<td th:text="${dto.cust.name}">John Doe</td>
+						<td th:text="${dto.cust.email}">john@example.com</td>
+						<td th:text="${dto.cust.phone}">+91-9876543210</td>
+						<td th:text="${dto.acc.account_number}">1234567890</td>
+						<td th:text="${dto.acc.ac_type}">Savings</td>
+						<td th:text="${dto.acc.balance}">Rs. 50,000</td>
+						<td>
+							<span class="status-badge">Active</span>
+						</td>
+						<td>
+							<form action="/delete" method="POST" style="display: inline;">
+								<input type="hidden" name="cust_id" th:value="${dto.cust.id}">
+								<button type="submit" class="action-btn" style="background: #e74c3c; padding: 5px 10px;">
+									<i class="fas fa-trash"></i> Delete
+								</button>
+							</form>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+
+	<!-- Add User & Account Modal -->
+	<div id="addUserAccountModal" class="modal">
+		<div class="modal-content">
+			<button class="close-btn" onclick="closeModal('addUserAccountModal')">&times;</button>
+			<h2>Add New User & Account</h2>
+			<form id="addUserAccountForm" method="post" action="/adduser">
+				<div class="form-section">
+					<h3>Personal Information</h3>
+					<div class="form-group">
+						<label>Full Name</label>
+						<input type="text" name="fullName" required>
+					</div>
+					<div class="form-group">
+						<label>Email</label>
+						<input type="email" name="email" required>
+					</div>
+					<div class="form-group">
+						<label>Phone</label>
+						<input type="tel" name="phone" required>
+					</div>
+					<div class="form-group">
+						<label>Address</label>
+						<textarea name="address" required></textarea>
+					</div>
+				</div>
+
+				<div class="form-section">
+					<h3>Account Information</h3>
+					<div class="form-group">
+						<label>Account Type</label>
+						<select name="accountType" required>
+							<option value="savings">Savings</option>
+							<option value="current">Current</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label>Initial Deposit (Rs.)</label>
+						<input type="number" name="initialDeposit" min="0" required>
+					</div>
+				</div>
+				<button type="submit" class="action-btn">Create User & Account</button>
+			</form>
+		</div>
+	</div>
+	<!-- Delete Confirmation Modal -->
+	<div id="deleteConfirmationModal" class="modal">
+		<div class="modal-content" style="max-width: 400px;">
+			<button class="close-btn" onclick="closeModal('deleteConfirmationModal')">&times;</button>
+			<h2 style="color: #e74c3c;">Delete Confirmation</h2>
+			<div style="margin: 20px 0;">
+				<p>Are you sure you want to delete this account?</p>
+				<p style="margin-top: 10px;"><strong>User: </strong><span id="deleteUserName"></span></p>
+				<p><strong>ID: </strong><span id="deleteUserId"></span></p>
+			</div>
+			<div style="display: flex; gap: 10px; justify-content: flex-end;">
+				<button class="action-btn" onclick="closeModal('deleteConfirmationModal')" style="background: #95a5a6;">
+					<i class="fas fa-times"></i> Cancel
+				</button>
+				<button class="action-btn" onclick="deleteUserAccount()" style="background: #e74c3c;">
+					<i class="fas fa-trash"></i> Delete
+				</button>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		let currentDeleteId = null;
+
+		function searchUserAccounts() {
+			const searchTerm = document.getElementById('userAccountSearch').value.toLowerCase();
+			console.log('Searching users & accounts:', searchTerm);
+			// Implement search logic here
+		}
+
+		function searchByAccountNumber() {
+			const accountNumber = document.getElementById('userAccountSearch').value;
+			console.log('Searching specific account number:', accountNumber);
+			// Implement account search logic here
+		}
+
+		function viewAllAccounts() {
+			console.log('Viewing all accounts');
+			document.getElementById('userAccountSearch').value = '';
+			// Implement view all accounts logic here
+		}
+
+		function viewUserAccount(userId) {
+			console.log('Viewing user account:', userId);
+			showModal('viewUserAccountModal');
+			// Implement view details logic here
+		}
+
+		function editUserAccount(userId) {
+			console.log('Editing user account:', userId);
+			showModal('addUserAccountModal');
+			// Implement edit logic here
+		}
+
+		function showDeleteConfirmation(userId, userName) {
+			currentDeleteId = userId;
+			document.getElementById('deleteUserName').textContent = userName;
+			document.getElementById('deleteUserId').textContent = userId;
+			showModal('deleteConfirmationModal');
+		}
+
+		function deleteUserAccount() {
+			if (currentDeleteId) {
+				console.log('Deleting user account:', currentDeleteId);
+				closeModal('deleteConfirmationModal');
+				alert('Account deleted successfully!');
+				currentDeleteId = null;
+				// Implement delete logic here
+			}
+		}
+
+		function showModal(modalId) {
+			document.getElementById(modalId).style.display = 'block';
+		}
+
+		function closeModal(modalId) {
+			document.getElementById(modalId).style.display = 'none';
+			if (modalId === 'deleteConfirmationModal') {
+				currentDeleteId = null;
+			}
+		}
+
+		// Form submission handler
+		document.getElementById('addUserAccountForm').addEventListener('submit', function (e) {
+			console.log('Creating new user & account');
+		});
+	</script>
+</body>
+
+</html>

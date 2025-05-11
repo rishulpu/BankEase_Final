@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BankEase - Loan Services</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f4f6f8;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Navigation Bar styles */
+        .navbar {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 30px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+        }
+
+        .nav-brand i {
+            margin-right: 10px;
+            color: #3498db;
+            font-size: 24px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-item {
+            color: #ecf0f1;
+            text-decoration: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
+            font-size: 16px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(52, 152, 219, 0.2);
+        }
+
+        .nav-item i {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .main-content {
+            margin-top: 80px;
+            padding: 40px 20px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .page-description {
+            color: #7f8c8d;
+            font-size: 16px;
+        }
+
+        /* Loan Types Section */
+        .loan-types {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .loan-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+        }
+
+        .loan-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .loan-card.selected {
+            border: 2px solid #3498db;
+        }
+
+        .loan-icon {
+            width: 60px;
+            height: 60px;
+            background: #f8f9fa;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .loan-icon i {
+            font-size: 24px;
+            color: #3498db;
+        }
+
+        .loan-title {
+            font-size: 20px;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .loan-details {
+            color: #7f8c8d;
+            margin-bottom: 15px;
+        }
+
+        .loan-features {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .loan-features li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .loan-features i {
+            color: #27ae60;
+            margin-right: 8px;
+            font-size: 12px;
+        }
+
+        /* Calculator Section */
+        .calculator-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .calculator-title {
+            font-size: 24px;
+            color: #2c3e50;
+            margin-bottom: 25px;
+        }
+
+        .calculator-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .calculate-btn {
+            grid-column: span 2;
+            background: #3498db;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .calculate-btn:hover {
+            background: #2980b9;
+        }
+
+        /* Results Section */
+        .loan-result {
+            margin-top: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .loan-result.show {
+            display: block;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .result-item {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 24px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        .apply-btn {
+            display: block;
+            width: 100%;
+            background: #27ae60;
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        .apply-btn:hover {
+            background: #219a52;
+        }
+
+        @media (max-width: 1024px) {
+            .loan-types {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .nav-container {
+                padding: 0 20px;
+            }
+
+            .nav-menu {
+                gap: 15px;
+            }
+
+            .nav-item {
+                padding: 8px 12px;
+                font-size: 15px;
+            }
+
+            .user-profile-nav {
+                margin-left: 30px;
+                padding-left: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .loan-types {
+                grid-template-columns: 1fr;
+            }
+
+            .calculator-form {
+                grid-template-columns: 1fr;
+            }
+
+            .calculate-btn {
+                grid-column: span 1;
+            }
+
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar {
+                padding: 10px 15px;
+            }
+
+            .nav-menu {
+                gap: 10px;
+            }
+
+            .nav-item {
+                padding: 6px 10px;
+                font-size: 14px;
+            }
+
+            .user-profile-nav {
+                margin-left: 20px;
+                padding-left: 10px;
+            }
+        }
+
+        .user-profile-nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-left: 40px;
+            padding-left: 20px;
+        }
+
+        .user-avatar-nav {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name-nav {
+            font-weight: bold;
+            font-size: 15px;
+        }
+
+        .user-id-nav {
+            font-size: 13px;
+            color: #bdc3c7;
+        }
+
+        /* Add styles for status messages */
+        .status-message {
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            display: none;
+        }
+        .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+        .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #3498db;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+        }
+        
+        .loan-summary {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+        }
+        
+        .loan-summary p {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        
+        .total-amount {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid #ddd;
+            font-size: 18px !important;
+            color: #2c3e50;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .confirm-btn {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .cancel-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="/account" class="nav-brand">
+                <i class="fas fa-university"></i>
+                BankEase
+            </a>
+            
+            <div class="nav-menu">
+                <a href="/dashboard" class="nav-item">
+                    <i class="fas fa-home"></i>Dashboard
+                </a>
+                <a href="/profile" class="nav-item">
+                    <i class="fas fa-user"></i>My Profile
+                </a>
+                <a href="/changePass" class="nav-item">
+                    <i class="fas fa-lock"></i>Change Password
+                </a>
+                <a href="/transfer" class="nav-item">
+                    <i class="fas fa-exchange-alt"></i>Fund Transfer
+                </a>
+                <a href="/statement" class="nav-item">
+                    <i class="fas fa-file-invoice-dollar"></i>Statement
+                </a>
+                <div class="user-profile-nav">
+                    <div class="user-avatar-nav">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="user-info">
+                        <div class="user-name-nav" th:text="${customer.name}">User Name</div>
+                        <div class="user-id-nav" th:text="'ID: ' + ${account.cust_id}">ID: 1010112</div>
+                    </div>
+                </div>
+                <a href="#" class="nav-item" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>Logout
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="page-header">
+            <h1 class="page-title">Loan Services</h1>
+			<span th:text="${msg}"></span>
+            <p class="page-description">Explore our range of loan options tailored to your needs</p>
+        </div>
+
+        <!-- Loan Types -->
+        <div class="loan-types">
+            <!-- Personal Loan -->
+            <div class="loan-card" onclick="selectLoanType('personal', 500000)">
+                <div class="loan-icon">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3 class="loan-title">Personal Loan</h3>
+                <p class="loan-details">Quick personal loans for your immediate needs</p>
+                <div class="loan-amount">Up to Rs.5,00,000</div>
+                <ul class="loan-features">
+                    <li><i class="fas fa-check"></i> Interest rate from 8% p.a.</li>
+                    <li><i class="fas fa-check"></i> Flexible tenure up to 5 years</li>
+                    <li><i class="fas fa-check"></i> Quick approval process</li>
+                </ul>
+            </div>
+
+            <!-- Home Loan -->
+            <div class="loan-card" onclick="selectLoanType('home', 5000000)">
+                <div class="loan-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <h3 class="loan-title">Home Loan</h3>
+                <p class="loan-details">Make your dream home a reality</p>
+                <div class="loan-amount">Up to Rs.50,00,000</div>
+                <ul class="loan-features">
+                    <li><i class="fas fa-check"></i> Interest rate from 6.5% p.a.</li>
+                    <li><i class="fas fa-check"></i> Tenure up to 30 years</li>
+                    <li><i class="fas fa-check"></i> Low processing fees</li>
+                </ul>
+            </div>
+
+            <!-- Business Loan -->
+            <div class="loan-card" onclick="selectLoanType('business', 2000000)">
+                <div class="loan-icon">
+                    <i class="fas fa-briefcase"></i>
+                </div>
+                <h3 class="loan-title">Business Loan</h3>
+                <p class="loan-details">Grow your business with our financial support</p>
+                <div class="loan-amount">Up to Rs.20,00,000</div>
+                <ul class="loan-features">
+                    <li><i class="fas fa-check"></i> Interest rate from 7% p.a.</li>
+                    <li><i class="fas fa-check"></i> Flexible repayment options</li>
+                    <li><i class="fas fa-check"></i> Minimal documentation</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Loan Calculator -->
+        <div class="calculator-section">
+            <h2 class="calculator-title">Loan Calculator</h2>
+            <form class="calculator-form" onsubmit="calculateLoan(event)">
+                <div class="form-group">
+                    <label for="loanType">Loan Type</label>
+                    <select id="loanType" name="loanType" required>
+                        <option value="">Select Loan Type</option>
+                        <option value="personal">Personal Loan</option>
+                        <option value="home">Home Loan</option>
+                        <option value="business">Business Loan</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="loanAmount">Loan Amount (Rs.)</label>
+                    <input type="number" id="loanAmount" name="loanAmount" required min="10000">
+                </div>
+                <div class="form-group">
+                    <label for="loanTerm">Loan Term (Years)</label>
+                    <select id="loanTerm" name="loanTerm" required>
+                        <option value="1">1 Year</option>
+                        <option value="2">2 Years</option>
+                        <option value="3">3 Years</option>
+                        <option value="5">5 Years</option>
+                        <option value="10">10 Years</option>
+                        <option value="15">15 Years</option>
+                        <option value="20">20 Years</option>
+                        <option value="30">30 Years</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="interestRate">Interest Rate (%)</label>
+                    <input type="number" id="interestRate" name="interestRate" step="0.1" required readonly>
+                </div>
+                
+                <button type="submit" class="calculate-btn">Calculate EMI</button>
+            </form>
+
+            <!-- Loan Results -->
+            <div id="loanResult" class="loan-result">
+                <h3>Loan Summary</h3>
+                <div class="result-grid">
+                    <div class="result-item">
+                        <div class="result-label">Monthly EMI</div>
+                        <div id="monthlyEmi" class="result-value">Rs.0</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Total Interest</div>
+                        <div id="totalInterest" class="result-value">Rs.0</div>
+                    </div>
+                    <div class="result-item">
+                        <div class="result-label">Total Amount</div>
+                        <div id="totalAmount" class="result-value">Rs.0</div>
+                    </div>
+                </div>
+                <button onclick="showLoanApplication()" class="apply-btn">Apply Now</button>
+            </div>
+
+            <!-- Loan Application Form -->
+            <div id="loanApplicationForm" class="calculator-section" style="display: none; margin-top: 30px;">
+                <h2 class="calculator-title">Loan Application</h2>
+                <form id="loanAppForm" class="calculator-form" action="/loanapply" method="POST" onsubmit="return confirmSubmission(event)">
+                    <input type="hidden" id="calculatedEmi" name="calculatedEmi">
+                    <input type="hidden" id="calculatedInterest" name="calculatedInterest">
+                    <input type="hidden" id="calculatedTotal" name="calculatedTotal">
+                    <input type="hidden" id="loanTypeHidden" name="loanType">
+                    <input type="hidden" id="loanAmountHidden" name="loanAmount">
+                    <input type="hidden" id="loanTermHidden" name="loanTerm">
+                    <input type="hidden" id="interestRateHidden" name="interestRate">
+                    <div class="form-group">
+                        <label for="fullName">Full Name</label>
+                        <input type="text" id="fullName" name="fullName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="employment">Employment Status</label>
+                        <select id="employment" name="employment" required>
+                            <option value="">Select Status</option>
+                            <option value="employed">Employed</option>
+                            <option value="self-employed">Self Employed</option>
+                            <option value="business">Business Owner</option>
+                            <option value="retired">Retired</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="income">Monthly Income (Rs.)</label>
+                        <input type="number" id="income" name="income" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="purpose">Loan Purpose</label>
+                        <select id="purpose" name="purpose" required>
+                            <option value="">Select Purpose</option>
+                            <option value="home-purchase">Home Purchase</option>
+                            <option value="home-renovation">Home Renovation</option>
+                            <option value="business-expansion">Business Expansion</option>
+                            <option value="education">Education</option>
+                            <option value="debt-consolidation">Debt Consolidation</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="existingLoans">Existing Loans</label>
+                        <select id="existingLoans" name="existingLoans" required>
+                            <option value="no">No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+                    </div>
+                    
+                    <button type="submit" class="calculate-btn" style="background: #27ae60;">Submit Application</button>
+                </form>
+				
+                <!-- Add status message div -->
+                <div id="applicationStatus" style="margin-top: 20px; display: none;" class="status-message"></div>
+            </div>
+
+            <!-- Confirmation Modal -->
+            <div id="confirmationModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <h3>Confirm Loan Application</h3>
+                    <div class="loan-summary">
+                        <p><strong>Loan Type:</strong> <span id="confirmLoanType"></span></p>
+                        <p><strong>Principal Amount:</strong> <span id="confirmAmount"></span></p>
+                        <p><strong>Loan Term:</strong> <span id="confirmTerm"></span></p>
+                        <p><strong>Interest Rate:</strong> <span id="confirmRate"></span></p>
+                        <p><strong>Monthly EMI:</strong> <span id="confirmEmi"></span></p>
+                        <p><strong>Total Interest:</strong> <span id="confirmInterest"></span></p>
+                        <p class="total-amount"><strong>Total Amount Payable:</strong> <span id="confirmTotal"></span></p>
+                    </div>
+                    <div class="modal-buttons">
+                        <button onclick="submitFinalForm()" class="confirm-btn">Confirm & Submit</button>
+                        <button onclick="closeModal()" class="cancel-btn">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectLoanType(type, maxAmount) {
+            // Remove selected class from all cards
+            document.querySelectorAll('.loan-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Add selected class to clicked card
+            event.currentTarget.classList.add('selected');
+
+            // Set loan type in calculator
+            document.getElementById('loanType').value = type;
+            document.getElementById('loanAmount').value = '';
+            document.getElementById('loanAmount').max = maxAmount;
+
+            // Set interest rate based on loan type
+            const rates = {
+                personal: 8.0,
+                home: 6.5,
+                business: 7.0
+            };
+            document.getElementById('interestRate').value = rates[type];
+        }
+
+        function calculateLoan(event) {
+            event.preventDefault();
+            const amount = parseFloat(document.getElementById('loanAmount').value);
+            const years = parseInt(document.getElementById('loanTerm').value);
+            const rate = parseFloat(document.getElementById('interestRate').value);
+            
+            const monthlyRate = rate / 1200; // Convert annual rate to monthly decimal
+            const totalPayments = years * 12;
+            const emi = (amount * monthlyRate * Math.pow(1 + monthlyRate, totalPayments)) / 
+                       (Math.pow(1 + monthlyRate, totalPayments) - 1);
+            
+            const totalAmount = emi * totalPayments;
+            const totalInterest = totalAmount - amount;
+            
+            // Format numbers in Indian currency format with commas
+            const formatIndianCurrency = (num) => {
+                const parts = num.toFixed(2).split('.');
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                return 'Rs.' + parts.join('.');
+            };
+            
+            document.getElementById('monthlyEmi').textContent = formatIndianCurrency(emi);
+            document.getElementById('totalInterest').textContent = formatIndianCurrency(totalInterest);
+            document.getElementById('totalAmount').textContent = formatIndianCurrency(totalAmount);
+            
+            document.getElementById('loanResult').classList.add('show');
+        }
+
+        function showLoanApplication() {
+            const applicationForm = document.getElementById('loanApplicationForm');
+            applicationForm.style.display = 'block';
+            applicationForm.scrollIntoView({ behavior: 'smooth' });
+            
+            // Get all calculated values
+            const loanType = document.getElementById('loanType').value;
+            const amount = document.getElementById('loanAmount').value;
+            const term = document.getElementById('loanTerm').value;
+            const rate = document.getElementById('interestRate').value;
+            
+            // Get raw numeric values from calculations
+            const emi = parseFloat(document.getElementById('monthlyEmi').textContent.replace('Rs.', '').replace(/,/g, ''));
+            const totalInterest = parseFloat(document.getElementById('totalInterest').textContent.replace('Rs.', '').replace(/,/g, ''));
+            const totalAmount = parseFloat(document.getElementById('totalAmount').textContent.replace('Rs.', '').replace(/,/g, ''));
+            
+            // Store raw numeric values in hidden fields (without currency formatting)
+            document.getElementById('calculatedEmi').value = emi.toFixed(2);
+            document.getElementById('calculatedInterest').value = totalInterest.toFixed(2);
+            document.getElementById('calculatedTotal').value = totalAmount.toFixed(2);
+            
+            // Store loan details in hidden fields
+            document.getElementById('loanTypeHidden').value = loanType;
+            document.getElementById('loanAmountHidden').value = amount;
+            document.getElementById('loanTermHidden').value = term;
+            document.getElementById('interestRateHidden').value = rate;
+            
+            // Update purpose dropdown based on loan type
+            const purposeSelect = document.getElementById('purpose');
+            if (loanType === 'home') {
+                purposeSelect.value = 'home-purchase';
+            } else if (loanType === 'business') {
+                purposeSelect.value = 'business-expansion';
+            }
+        }
+
+        function logout() {
+            if (confirm("Are you sure you want to logout?")) {
+                window.location.href = "/logout";
+            }
+        }
+
+        // Initialize the calculator with default values
+        document.addEventListener('DOMContentLoaded', function() {
+            const defaultLoanType = 'personal';
+            document.getElementById('loanType').value = defaultLoanType;
+        });
+
+        function confirmSubmission(event) {
+            event.preventDefault();
+            
+            // Get all the values (raw numeric values from hidden fields)
+            const loanType = document.getElementById('loanTypeHidden').value;
+            const amount = document.getElementById('loanAmountHidden').value;
+            const term = document.getElementById('loanTermHidden').value;
+            const rate = document.getElementById('interestRateHidden').value;
+            const emi = document.getElementById('calculatedEmi').value;
+            const interest = document.getElementById('calculatedInterest').value;
+            const total = document.getElementById('calculatedTotal').value;
+            
+            // Format values for display in confirmation modal
+            const formatIndianCurrency = (num) => {
+                const parts = parseFloat(num).toFixed(2).split('.');
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+                return 'Rs.' + parts.join('.');
+            };
+            
+            // Update confirmation modal with formatted values for display only
+            document.getElementById('confirmLoanType').textContent = loanType.charAt(0).toUpperCase() + loanType.slice(1) + ' Loan';
+            document.getElementById('confirmAmount').textContent = formatIndianCurrency(amount);
+            document.getElementById('confirmTerm').textContent = term + ' years';
+            document.getElementById('confirmRate').textContent = rate + '%';
+            document.getElementById('confirmEmi').textContent = formatIndianCurrency(emi);
+            document.getElementById('confirmInterest').textContent = formatIndianCurrency(interest);
+            document.getElementById('confirmTotal').textContent = formatIndianCurrency(total);
+            
+            // Show modal
+            document.getElementById('confirmationModal').style.display = 'block';
+            return false;
+        }
+        
+        function closeModal() {
+            document.getElementById('confirmationModal').style.display = 'none';
+        }
+        
+        function submitFinalForm() {
+            document.getElementById('loanAppForm').submit();
+        }
+        
+        // Close modal if user clicks outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('confirmationModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+    </script>
+</body>
+</html> 
