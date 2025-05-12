@@ -55,7 +55,7 @@ public class ControllerMain {
 		
 		
 		int id=cmethod.returnIdfromEmailandPass(email, password);
-		
+		System.out.println("Login is runnnig");
 		if(id==0) {
 			m.addAttribute("msg","Wrong Email or Password");
 		    return "login";
