@@ -235,7 +235,7 @@ public class AdminPanel {
 			m.addAttribute("customers", cus);
 		}
 	
-		return "/users-accounts";
+		return "users-accounts";
 	}
 
 }
